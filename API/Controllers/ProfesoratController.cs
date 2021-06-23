@@ -22,7 +22,7 @@ namespace API.Controllers
             return await _context.Profesorat.ToListAsync();
         }
 
-        [HttpGet("{id}")]  //studentat/id
+        [HttpGet("{id}")]  //profesorat/id
 
         public async Task<ActionResult<Profesori>> GetProfesori(Guid id) 
         {
