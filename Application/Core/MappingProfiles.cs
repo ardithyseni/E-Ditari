@@ -9,6 +9,7 @@ namespace Application.Core
         {
             CreateMap<Studenti, Studenti>();
             CreateMap<Profesori, Profesori>();
+            CreateMap<Libri, Libri>();
         }
     }
 }

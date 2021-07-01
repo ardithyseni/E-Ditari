@@ -5,14 +5,14 @@ using Domain;
 using MediatR;
 using Persistence;
 
-namespace Application.Profesorat
+namespace Application.Librat
 {
     public class Edit
     {
         public class Command : IRequest
         {
 
-            public Profesori Profesori { get; set; }
+            public Libri Libri { get; set; }
         }
 
         public class Handler : IRequestHandler<Command>
@@ -28,9 +28,9 @@ namespace Application.Profesorat
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                var profesori = await _context.Profesorat.FindAsync(request.Profesori.ProfesoriID);
+                var libri = await _context.Studentat.FindAsync(request.Libri.Id);
 
-                _mapper.Map(request.Profesori, profesori);
+                _mapper.Map(request.Libri, libri);
 
                 await _context.SaveChangesAsync();
 

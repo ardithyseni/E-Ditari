@@ -1,36 +1,30 @@
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Domain;
 using MediatR;
 using Persistence;
 
-namespace Application.Profesorat
+namespace Application.Librat
 {
-    public class Edit
+    public class Create
     {
         public class Command : IRequest
         {
-
-            public Profesori Profesori { get; set; }
+            public Libri Libri { get; set; }
         }
+
 
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
-            private readonly IMapper _mapper;
-
-            public Handler(DataContext context, IMapper mapper)
+            public Handler(DataContext context)
             {
-                _mapper = mapper;
                 _context = context;
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                var profesori = await _context.Profesorat.FindAsync(request.Profesori.ProfesoriID);
-
-                _mapper.Map(request.Profesori, profesori);
+                _context.Librat.Add(request.Libri);
 
                 await _context.SaveChangesAsync();
 

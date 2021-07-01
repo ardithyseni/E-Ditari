@@ -11,44 +11,34 @@ namespace Persistence
         public static async Task SeedData(DataContext context)
         {
 
-            if (context.Profesorat.Any()) return;
+            if (context.Librat.Any()) return;
             
-            var profesorat = new List<Profesori>
+            var librat = new List<Libri>
             {
-                new Profesori
+                new Libri
                 {
-                    Emri = "Lavdim",
-                    Mbiemri= "Menxhiqi",
-                    Titulli = "Profesor",
-		            Datelindja = DateTime.Now.AddMonths(-60),
-                    Adresa= "Bregu i Diellit, Prishtine",
-                    NumriKontaktues = "044123456",
-                    Email = "lm@gmail.com",
-                   
+                    Autori = "Rexhep Gjergji",
+                    Title = "Matematika 1",
+                    Description = "Libri i Matematikes 1",
+		    Category = "Matematike",
                 },
-                new Profesori
+                new Libri
                 {
-                    Emri = "Blerton",
-                    Mbiemri= "Abazi",
-                    Titulli = "Profesor",
-		            Datelindja = DateTime.Now.AddMonths(-90),
-                    Adresa= "Prishtine",
-                    NumriKontaktues = "044123123",
-                    Email = "ba@gmail.com",  
+                    Autori = "Daniel Lang",
+                    Title = "Introduction to Java Programming",
+                    Description = "Libri per SHK1 dhe SHK2",
+		    Category = "Java",  
                 },
-                new Profesori
+                new Libri
                 {
-                    Emri = "Profa",
-                    Mbiemri= "Filan",
-                    Titulli = "Asistent",
-		            Datelindja = DateTime.Now.AddMonths(-24),
-                    Adresa= "Prizren",
-                    NumriKontaktues = "044443444",
-                    Email = "pf@gmail.com",
+                    Autori = "Abraham-Silberschatz",
+                    Title = "Operating System Concepts (2018)",
+                    Description = "Libri per Sisteme Operative",
+		    Category = "Sisteme Operative",
                 }
 	     };
 
-            await context.Profesorat.AddRangeAsync(profesorat);
+            await context.Librat.AddRangeAsync(librat);
             await context.SaveChangesAsync();
         }
 

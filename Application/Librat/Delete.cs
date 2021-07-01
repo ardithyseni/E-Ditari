@@ -5,14 +5,14 @@ using MediatR;
 using Persistence;
 using Domain;
 
-namespace Application.Studentat
-{
 
-    public class Delete
+namespace Application.Librat
 {
-    public class Command : IRequest
+    public class Delete
     {
-        public Guid StudentiID { get; set; }
+        public class Command : IRequest
+    {
+        public int Id { get; set; }
     }
 
     public class Handler : IRequestHandler<Command>
@@ -25,15 +25,14 @@ namespace Application.Studentat
 
         public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
         {
-            var studenti = await _context.Studentat.FindAsync(request.StudentiID);
+            var libri = await _context.Librat.FindAsync(request.Id);
 
-            _context.Remove(studenti); // removes from memory
+            _context.Remove(libri); // removes from memory
 
             await _context.SaveChangesAsync();
 
             return Unit.Value;
         }
+        }
     }
-}
-
 }

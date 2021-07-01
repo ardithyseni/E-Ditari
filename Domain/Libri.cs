@@ -2,7 +2,7 @@ using System;
 
 namespace Domain
 {
-    public class Book 
+    public class Libri 
     {
         public int Id { get; set; }
         public string Autori { get; set; }

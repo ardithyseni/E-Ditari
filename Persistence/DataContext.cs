@@ -12,7 +12,7 @@ namespace Persistence
 
         public DbSet<Studenti> Studentat { get; set; }
 
-        public DbSet<Book> Librat { get; set; }
+        public DbSet<Libri> Librat { get; set; }
 
         public DbSet<Profesori> Profesorat {get; set; }
 
