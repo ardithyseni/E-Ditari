@@ -20,7 +20,6 @@ namespace Application.Librat
         
             public Handler(DataContext context)
             {
-                
                 _context = context;
             }
 

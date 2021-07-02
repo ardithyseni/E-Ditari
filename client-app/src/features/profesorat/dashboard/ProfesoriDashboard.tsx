@@ -1,50 +1,31 @@
 import React from "react";
 import { Grid } from "semantic-ui-react";
-import { Profesori } from "../../../app/models/profesori";
-import ProfesoriList from './ProfesoriList';
-import ProfesoriDetails from './../details/ProfesoriDetails';
-import ProfesoriForm from './../form/ProfesoriForm';
+import ProfesoriList from "./ProfesoriList";
+import ProfesoriDetails from "./../details/ProfesoriDetails";
+import ProfesoriForm from "./../form/ProfesoriForm";
+import { useStore } from "../../../app/stores/store";
+import { observer } from 'mobx-react-lite';
 
-interface Props {
-    profesorat: Profesori[];
-    selectedProfesori: Profesori | undefined;
-    selectProfesori: (id: string) => void;
-    cancelSelectProfesori: () => void;
-    editProfesoriMode: boolean;
-    openProfesoriForm: (id: string) => void;
-    closeProfesoriForm: () => void;  
-    createOrEditProfesori: (profesori: Profesori) => void;
-    deleteProfesori: (id: string) => void;
-    submittingProfesori: boolean;
-}
 
-export default function ProfesoriDashboard({profesorat, selectedProfesori, selectProfesori
-                                    , cancelSelectProfesori, editProfesoriMode, openProfesoriForm,
-                          submittingProfesori, closeProfesoriForm, createOrEditProfesori, deleteProfesori}:Props) {
+export default observer (function ProfesoriDashboard() {
+
+  const { profesoriStore } = useStore();
+  const { selectedProfesori, editProfesoriMode } = profesoriStore;
+
   return (
     <Grid>
       <Grid.Column width="10">
-        <ProfesoriList 
-        profesorat = {profesorat} 
-        selectProfesori ={selectProfesori}
-        deleteProfesori = {deleteProfesori}
-        submittingProfesori = {submittingProfesori}
-        />
+        <ProfesoriList />
       </Grid.Column>
-      <Grid.Column width='6'>
-          {selectedProfesori && !editProfesoriMode && // anything to the right will execute perderisa e majta nuk eshte null
-         <ProfesoriDetails profesori={selectedProfesori}
-          cancelSelectProfesori = {cancelSelectProfesori}
-          openProfesoriForm= {openProfesoriForm}
-          />}
-        {editProfesoriMode &&
-        <ProfesoriForm
-        closeProfesoriForm = {closeProfesoriForm} 
-        profesori = {selectedProfesori} 
-        createOrEditProfesori = {createOrEditProfesori}
-        submittingProfesori = {submittingProfesori} 
-        />}
-         </Grid.Column>
+      <Grid.Column width="6">
+        {selectedProfesori &&
+          !editProfesoriMode && ( // anything to the right will execute perderisa e majta nuk eshte null
+            <ProfesoriDetails />
+          )}
+        {editProfesoriMode && (
+          <ProfesoriForm />
+        )}
+      </Grid.Column>
     </Grid>
   );
-}
+})

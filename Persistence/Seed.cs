@@ -15,26 +15,13 @@ namespace Persistence
             
             var librat = new List<Libri>
             {
+                
                 new Libri
                 {
-                    Autori = "Rexhep Gjergji",
-                    Title = "Matematika 1",
-                    Description = "Libri i Matematikes 1",
-		    Category = "Matematike",
-                },
-                new Libri
-                {
-                    Autori = "Daniel Lang",
-                    Title = "Introduction to Java Programming",
-                    Description = "Libri per SHK1 dhe SHK2",
-		    Category = "Java",  
-                },
-                new Libri
-                {
-                    Autori = "Abraham-Silberschatz",
-                    Title = "Operating System Concepts (2018)",
-                    Description = "Libri per Sisteme Operative",
-		    Category = "Sisteme Operative",
+                    Autori = "Cal Newport",
+                    Title = "Deep Work",
+                    Description = "Libri per Fokus", 
+		            Category = "Life",
                 }
 	     };
 

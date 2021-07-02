@@ -1,13 +1,14 @@
 import React from 'react';
-import { Button, Container, Menu, MenuItem } from 'semantic-ui-react';
+import { Button, Container, Menu } from 'semantic-ui-react';
+import { useStore } from './../stores/store';
 
-interface Props {
-    openStudentiForm: () => void;
-    openProfesoriForm: () => void;
-}
 
-export default function NavBar({openStudentiForm, openProfesoriForm}: Props) {
+export default function NavBar() {
     
+    const {studentiStore} = useStore();
+    const {profesoriStore} = useStore();
+    const {libriStore} = useStore();
+
     return (
         <Menu inverted fixed='top' >
 
@@ -18,9 +19,11 @@ export default function NavBar({openStudentiForm, openProfesoriForm}: Props) {
                 </Menu.Item>
                 <Menu.Item name="Studentat" />
                  <Menu.Item>
-                     <Button onClick = {openStudentiForm} positive content = 'Shto Student' />
-                     <Button style = {{marginLeft: '20px' }} onClick = {openProfesoriForm} positive content = 'Shto Profesor' />
+                     <Button onClick = {() => studentiStore.openStudentiForm()} positive content = 'Shto Student' />
+                     <Button style = {{marginLeft: '20px' }} onClick = {() => profesoriStore.openProfesoriForm()} positive content = 'Shto Profesor' />
+                     <Button style = {{marginLeft: '20px' }} onClick = {() => libriStore.openLibriForm()} positive content = 'Shto Liber' />
                      </Menu.Item>   
+                     
             </Container>
 
         </Menu>

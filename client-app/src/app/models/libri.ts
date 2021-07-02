@@ -1,5 +1,5 @@
 export interface Libri {
-    id: number;
+    id: string;
     autori: string;
     title: string;
     description: string;

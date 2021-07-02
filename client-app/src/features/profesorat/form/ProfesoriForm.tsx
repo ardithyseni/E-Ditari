@@ -1,17 +1,13 @@
+import { observer } from 'mobx-react-lite';
 import React, { ChangeEvent, useState } from 'react';
 import { Button, Form, Segment } from 'semantic-ui-react';
-import { Profesori } from '../../../app/models/profesori';
 
-interface Props {
-    profesori: Profesori | undefined;
-    closeProfesoriForm: () => void;
-    createOrEditProfesori: (profesori: Profesori) => void;
-    submittingProfesori: boolean;
+import { useStore } from './../../../app/stores/store';
 
-}
+export default observer (function ProfesoriForm(){
 
-export default function ProfesoriForm({profesori: selectedProfesori, closeProfesoriForm, 
-    submittingProfesori, createOrEditProfesori} : Props){
+        const {profesoriStore} = useStore();
+        const {selectedProfesori, closeProfesoriForm, loading, createProfesori, updateProfesori} = profesoriStore;
 
     const initialState = selectedProfesori ?? {
         profesoriID: '',
@@ -27,7 +23,7 @@ export default function ProfesoriForm({profesori: selectedProfesori, closeProfes
     const [profesori, setProfesori] = useState(initialState);
 
     function handleSubmitProfesori() {
-        createOrEditProfesori(profesori);
+        profesori.profesoriID ? updateProfesori(profesori) : createProfesori(profesori);
     }
 
     function handleProfesoriInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -46,9 +42,9 @@ export default function ProfesoriForm({profesori: selectedProfesori, closeProfes
                 <Form.Input placeholder = 'Numri Kontaktues' value={profesori.numriKontaktues} name='numriKontaktues' onChange={handleProfesoriInputChange} />
                 <Form.Input placeholder = 'Email' value={profesori.email} name='email' onChange={handleProfesoriInputChange} />
 
-                <Button loading = {submittingProfesori} floated = 'right' positive type = 'submit' content ='Submit' />
+                <Button loading = {loading} floated = 'right' positive type = 'submit' content ='Submit' />
                 <Button onClick = {closeProfesoriForm} floated = 'right' type = 'button' content = 'Cancel' />
             </Form>
         </Segment>
     )
-}
+})

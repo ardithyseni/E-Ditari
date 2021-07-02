@@ -1,19 +1,21 @@
 import React from 'react';
 import { Button, Card} from 'semantic-ui-react';
-import { Profesori } from '../../../app/models/profesori';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
+import { useStore } from '../../../app/stores/store';
 
-interface Props {
-    profesori: Profesori;
-    cancelSelectProfesori: () => void;
-    openProfesoriForm: (id:string) => void;
-}
 
-export default function ProfesoriDetails({profesori, cancelSelectProfesori, openProfesoriForm}: Props){
+export default function ProfesoriDetails(){
+
+  const{profesoriStore} = useStore();
+  const {selectedProfesori: profesori, openProfesoriForm, cancelSelectedProfesori} = profesoriStore;
+
+  if (!profesori) return <LoadingComponent />
+
     return (
         <Card fluid>
         
         <Card.Content>
-          <Card.Header>{profesori.emri} {profesori.mbiemri}</Card.Header>
+          <Card.Header>{profesori.emri + ' ' + profesori.mbiemri}</Card.Header>
           <Card.Meta>
             <span>{profesori.titulli}</span>
           </Card.Meta>
@@ -27,7 +29,7 @@ export default function ProfesoriDetails({profesori, cancelSelectProfesori, open
         <Card.Content extra>
           <Button.Group widths='2'>
             <Button onClick={() => openProfesoriForm(profesori.profesoriID)} basic color='blue' content='Edit'/>              
-            <Button onClick={cancelSelectProfesori} basic color='grey' content='Cancel'/>              
+            <Button onClick={cancelSelectedProfesori} basic color='grey' content='Cancel'/>              
           </Button.Group>
         </Card.Content>
       </Card>   

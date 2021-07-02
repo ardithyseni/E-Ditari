@@ -28,7 +28,7 @@ namespace Application.Librat
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                var libri = await _context.Studentat.FindAsync(request.Libri.Id);
+                var libri = await _context.Librat.FindAsync(request.Libri.Id);
 
                 _mapper.Map(request.Libri, libri);
 

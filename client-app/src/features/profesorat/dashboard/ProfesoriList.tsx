@@ -1,28 +1,29 @@
+import { observer } from 'mobx-react-lite';
 import React, { SyntheticEvent, useState } from 'react';
-
 import { Button, Item, Segment } from 'semantic-ui-react';
-import { Profesori } from '../../../app/models/profesori';
+import { useStore } from '../../../app/stores/store';
 
-interface Props {
-    profesorat: Profesori[];
-    selectProfesori: (id: string) => void;
-    deleteProfesori: (id: string) => void;
-    submittingProfesori: boolean;
-}
 
-export default function ProfesoriList({profesorat, selectProfesori,submittingProfesori , deleteProfesori}: Props) {
+
+
+export default observer (function ProfesoriList() {
     
+    const{profesoriStore} = useStore();
+    const {deleteProfesori, profesoratByDate, loading} = profesoriStore;
+
     const [target, setTarget] = useState('');
 
     function handleProfesoriDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
         setTarget(e.currentTarget.name);
         deleteProfesori(id);
     }
+
+    
     
     return (
         <Segment>
             <Item.Group divided>
-                {profesorat.map(profesori =>(
+                {profesoratByDate.map(profesori =>(
                     <Item key={profesori.profesoriID}>
                         <Item.Content>
                             <Item.Header as='a'>{profesori.emri} {profesori.mbiemri}</Item.Header>
@@ -35,10 +36,10 @@ export default function ProfesoriList({profesorat, selectProfesori,submittingPro
                             </Item.Description>
 
                             <Item.Extra>
-                                <Button onClick={() => selectProfesori(profesori.profesoriID)} floated='right' content='View' color='blue' />
+                                <Button onClick={() => profesoriStore.selectProfesori(profesori.profesoriID)} floated='right' content='View' color='blue' />
                                 <Button 
                                 name = {profesori.profesoriID}
-                                loading = {submittingProfesori && target === profesori.profesoriID} 
+                                loading = {loading && target === profesori.profesoriID} 
                                 onClick={(e) => handleProfesoriDelete(e, profesori.profesoriID)} 
                                 floated='right' 
                                 content='Delete' 
@@ -54,4 +55,4 @@ export default function ProfesoriList({profesorat, selectProfesori,submittingPro
             </Item.Group>
         </Segment>
     )
-}
+})

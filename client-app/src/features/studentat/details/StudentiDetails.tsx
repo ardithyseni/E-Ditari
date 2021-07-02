@@ -1,14 +1,17 @@
 import React from 'react';
 import { Button, Card} from 'semantic-ui-react';
-import { Studenti } from '../../../app/models/studenti';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
+import { useStore } from '../../../app/stores/store';
 
-interface Props {
-    studenti: Studenti;
-    cancelSelectStudenti: () => void;
-    openStudentiForm: (id:string) => void;
-}
 
-export default function StudentiDetails({studenti, cancelSelectStudenti, openStudentiForm}: Props){
+
+export default function StudentiDetails(){
+
+  const{studentiStore} = useStore();
+  const {selectedStudenti: studenti, openStudentiForm, cancelSelectedStudenti} = studentiStore;
+
+  if (!studenti) return <LoadingComponent />;
+
     return (
         <Card fluid>
         
@@ -27,7 +30,7 @@ export default function StudentiDetails({studenti, cancelSelectStudenti, openStu
         <Card.Content extra>
           <Button.Group widths='2'>
             <Button onClick={() => openStudentiForm(studenti.studentiID)} basic color='blue' content='Edit'/>              
-            <Button onClick={cancelSelectStudenti} basic color='grey' content='Cancel'/>              
+            <Button onClick={cancelSelectedStudenti} basic color='grey' content='Cancel'/>              
           </Button.Group>
         </Card.Content>
       </Card>   

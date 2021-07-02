@@ -1,16 +1,13 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Button, Form, Segment } from 'semantic-ui-react';
-import { Studenti } from './../../../app/models/studenti';
+import { useStore } from '../../../app/stores/store';
+import { observer } from 'mobx-react-lite';
 
-interface Props {
-    studenti: Studenti | undefined;
-    closeStudentiForm: () => void;
-    createOrEditStudenti: (studenti: Studenti) => void;
-    submittingStudenti: boolean;
-}
 
-export default function StudentiForm({studenti: selectedStudenti, 
-                    closeStudentiForm, createOrEditStudenti, submittingStudenti} : Props){
+export default observer (function StudentiForm(){
+
+    const{studentiStore} = useStore();
+    const {selectedStudenti, closeStudentiForm, createStudenti, updateStudenti, loading} = studentiStore;
 
     const initialState = selectedStudenti ?? {
         studentiID: '',
@@ -25,7 +22,7 @@ export default function StudentiForm({studenti: selectedStudenti,
     const [studenti, setStudenti] = useState(initialState);
 
     function handleSubmitStudenti() {
-        createOrEditStudenti(studenti);
+        studenti.studentiID ? updateStudenti(studenti) : createStudenti(studenti);
     }
 
     function handleStudentiInputChange (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -42,9 +39,9 @@ export default function StudentiForm({studenti: selectedStudenti,
                 <Form.Input placeholder = 'Adresa' value={studenti.adresa} name='adresa' onChange={handleStudentiInputChange} />
                 <Form.Input placeholder = 'Numri Kontaktues' value={studenti.numriKontaktues} name='numriKontaktues' onChange={handleStudentiInputChange} />
                 <Form.Input placeholder = 'Email' value={studenti.email} name='email' onChange={handleStudentiInputChange} />
-                <Button loading = {submittingStudenti} floated = 'right' positive type = 'submit' content ='Submit' />
+                <Button loading = {loading} floated = 'right' positive type = 'submit' content ='Submit' />
                 <Button onClick = {closeStudentiForm} floated = 'right' type = 'button' content = 'Cancel' />
             </Form>
         </Segment>
     )
-}
+})

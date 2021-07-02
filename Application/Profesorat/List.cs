@@ -22,7 +22,7 @@ namespace Application.Profesorat
 
             public async Task<List<Profesori>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await _context.Profesorat.ToListAsync();
+                return await _context.Profesorat.ToListAsync(cancellationToken);
             }
         }
     }
