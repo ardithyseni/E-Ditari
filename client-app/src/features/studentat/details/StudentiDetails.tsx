@@ -1,20 +1,27 @@
-import React from 'react';
-import { Button, Card} from 'semantic-ui-react';
+import React, { useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { Button, Card } from 'semantic-ui-react';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { useStore } from '../../../app/stores/store';
+import { observer } from 'mobx-react-lite';
 
 
 
-export default function StudentiDetails(){
+export default observer (function StudentiDetails(){
 
   const{studentiStore} = useStore();
-  const {selectedStudenti: studenti, openStudentiForm, cancelSelectedStudenti} = studentiStore;
+  const {selectedStudenti: studenti, loadStudenti, loadingInitial} = studentiStore;
+  const {id} = useParams<{id: string}>();
 
-  if (!studenti) return <LoadingComponent />;
+  useEffect(() => {
+    if (id) loadStudenti(id);
+  }, [id, loadStudenti]);
+
+  if (loadingInitial || !studenti) return <LoadingComponent />;
 
     return (
         <Card fluid>
-        
+
         <Card.Content>
           <Card.Header>{studenti.emri +  ' ' + studenti.mbiemri}</Card.Header>
           <Card.Meta>
@@ -29,10 +36,10 @@ export default function StudentiDetails(){
         </Card.Content>
         <Card.Content extra>
           <Button.Group widths='2'>
-            <Button onClick={() => openStudentiForm(studenti.studentiID)} basic color='blue' content='Edit'/>              
-            <Button onClick={cancelSelectedStudenti} basic color='grey' content='Cancel'/>              
+            <Button as = {Link} to = {`/manageStudenti/${studenti.studentiID}`} basic color='blue' content='Edit'/>              
+            <Button as = {Link} to = '/librat' basic color='grey' content='Cancel'/>                            
           </Button.Group>
         </Card.Content>
       </Card>   
     )
-}
+})

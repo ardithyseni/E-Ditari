@@ -1,30 +1,33 @@
-import React from "react";
-import { Grid } from "semantic-ui-react";
+import React, {useEffect} from "react";
+import { Grid, Header } from "semantic-ui-react";
 import ProfesoriList from "./ProfesoriList";
-import ProfesoriDetails from "./../details/ProfesoriDetails";
-import ProfesoriForm from "./../form/ProfesoriForm";
 import { useStore } from "../../../app/stores/store";
 import { observer } from 'mobx-react-lite';
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 
 export default observer (function ProfesoriDashboard() {
 
-  const { profesoriStore } = useStore();
-  const { selectedProfesori, editProfesoriMode } = profesoriStore;
+  const { profesoriStore } = useStore(); 
+
+  const {loadProfesorat, profesoriRegistry} = profesoriStore;
+
+  useEffect(() => {
+    if (profesoriRegistry.size <= 1) loadProfesorat();
+  }, [profesoriRegistry.size, loadProfesorat]);
+
+  if(profesoriStore.loadingInitial) return <LoadingComponent content = 'Loading Profesorat' />
 
   return (
+
+
     <Grid>
-      <Grid.Column width="10">
+      <Header as='h1'>Profesorat</Header>
+      <Grid.Column width="8">
         <ProfesoriList />
       </Grid.Column>
-      <Grid.Column width="6">
-        {selectedProfesori &&
-          !editProfesoriMode && ( // anything to the right will execute perderisa e majta nuk eshte null
-            <ProfesoriDetails />
-          )}
-        {editProfesoriMode && (
-          <ProfesoriForm />
-        )}
+      <Grid.Column width="4">
+        {/* <h2>Profesori Filters</h2> */}
       </Grid.Column>
     </Grid>
   );

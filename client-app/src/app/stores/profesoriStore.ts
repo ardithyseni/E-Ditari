@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { Profesori } from './../models/profesori';
 import agentProfesori from './../api/agentProfesori';
-import { v4 as uuid } from 'uuid';
 
 export default class ProfesoriStore {
 
@@ -16,30 +15,57 @@ export default class ProfesoriStore {
     }
 
     get profesoratByDate() {
-        return Array.from(this.profesoriRegistry.values()).sort((a, b) => 
+        return Array.from(this.profesoriRegistry.values()).sort((a, b) =>
             Date.parse(a.datelindja) - Date.parse(b.datelindja));
     }
 
     loadProfesorat = async () => {
-
+        this.loadingInitial = true;
         try {
             const profesorat = await agentProfesori.Profesorat.listProfesorat();
             runInAction(() => {
                 profesorat.forEach(profesori => {
-                    profesori.datelindja = profesori.datelindja.split('T')[0];
-                    this.profesoriRegistry.set(profesori.profesoriID, profesori);
+                    this.setProfesori(profesori);
                 })
             })
             this.setLoadingInitial(false);
-
-
         } catch (error) {
             console.log(error);
-
             this.setLoadingInitial(false);
-
-
         }
+    }
+
+    loadProfesori = async (id: string) => {
+        let profesori = this.getProfesori(id);
+        if (profesori) {
+            this.selectedProfesori = profesori;
+            return profesori;
+        }
+        else {
+            this.loadingInitial = true;
+            try {
+                profesori = await agentProfesori.Profesorat.detailsProfesori(id);
+                this.setProfesori(profesori);
+                runInAction(() => {
+                    this.selectedProfesori = profesori;
+                })
+                this.setLoadingInitial(false);
+                return profesori;
+            } catch (error) {
+                console.log(error);
+                this.setLoadingInitial(false);
+            }
+        }
+    }
+
+    private getProfesori = (id: string) => {
+        return this.profesoriRegistry.get(id);
+    }
+
+    private setProfesori = (profesori: Profesori) => {
+        profesori.datelindja = profesori.datelindja.split('T')[0];
+        this.profesoriRegistry.set(profesori.profesoriID, profesori);
+
     }
 
     setLoadingInitial = (state: boolean) => {
@@ -47,27 +73,26 @@ export default class ProfesoriStore {
     }
 
 
-    selectProfesori = (id: string) => {
-        this.selectedProfesori = this.profesoriRegistry.get(id);
-    }
+    // selectProfesori = (id: string) => {
+    //     this.selectedProfesori = this.profesoriRegistry.get(id);
+    // }
 
-    cancelSelectedProfesori = () => {
-        this.selectedProfesori = undefined;
-    }
+    // cancelSelectedProfesori = () => {
+    //     this.selectedProfesori = undefined;
+    // }
 
-    openProfesoriForm = (id?: string) => {
-        id ? this.selectProfesori(id) : this.cancelSelectedProfesori();
-        this.editProfesoriMode = true;
-    }
+    // openProfesoriForm = (id?: string) => {
+    //     id ? this.selectProfesori(id) : this.cancelSelectedProfesori();
+    //     this.editProfesoriMode = true;
+    // }
 
-    closeProfesoriForm = () => {
-        this.editProfesoriMode = false;
-    }
+    // closeProfesoriForm = () => {
+    //     this.editProfesoriMode = false;
+    // }
 
 
     createProfesori = async (profesori: Profesori) => {
         this.loading = true;
-        profesori.profesoriID = uuid();
 
         try {
             await agentProfesori.Profesorat.createProfesori(profesori);
@@ -111,7 +136,7 @@ export default class ProfesoriStore {
             await agentProfesori.Profesorat.deleteProfesori(id);
             runInAction(() => {
                 this.profesoriRegistry.delete(id);
-                if (this.selectedProfesori?.profesoriID === id) this.cancelSelectedProfesori();
+                // if (this.selectedProfesori?.profesoriID === id) this.cancelSelectedProfesori();
                 this.loading = false;
             })
         } catch (error) {

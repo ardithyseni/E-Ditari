@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Card} from 'semantic-ui-react';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { useStore } from './../../../app/stores/store';
+import { useParams, Link } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
 
 
-export default function LibriDetails(){
+export default observer (function LibriDetails(){
     
   const{libriStore} = useStore();
-  const {selectedLibri: libri, openLibriForm, cancelSelectedLibri} = libriStore;
+  const {selectedLibri: libri, loadLibri, loadingInitial} = libriStore;
+  const {id} = useParams<{id: string}>();
 
-  if (!libri) return <LoadingComponent />
+  useEffect(() => {
+    if (id) loadLibri(id);
+  }, [id, loadLibri]);
+
+  if (loadingInitial || !libri) return <LoadingComponent />
 
   return (
         <Card fluid>
@@ -26,10 +33,10 @@ export default function LibriDetails(){
         </Card.Content>
         <Card.Content extra>
           <Button.Group widths='2'>
-            <Button onClick={() => openLibriForm(libri.id)} basic color='blue' content='Edit'/>              
-            <Button onClick={cancelSelectedLibri} basic color='grey' content='Cancel'/>              
+            <Button as = {Link} to = {`/manageLibri/${libri.id}`} basic color='blue' content='Edit'/>              
+            <Button as = {Link} to = '/librat' basic color='grey' content='Cancel'/>              
           </Button.Group>
         </Card.Content>
       </Card>   
     )
-}
+})

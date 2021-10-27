@@ -32,7 +32,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateStudenti(Profesori profesori)
+        public async Task<IActionResult> CreateProfesori(Profesori profesori)
         {
             return Ok(await Mediator.Send(new Create.Command {Profesori = profesori}));
         }

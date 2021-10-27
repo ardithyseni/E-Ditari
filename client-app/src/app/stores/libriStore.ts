@@ -1,6 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { Libri } from './../models/libri';
-import { v4 as uuid } from 'uuid';
 import agentLibri from './../api/agentLibri';
 
 export default class LibriStore {
@@ -20,13 +19,12 @@ export default class LibriStore {
     }
 
     loadLibrat = async () => {
-        
-
+        this.loadingInitial = true;
         try {
             const librat = await agentLibri.Librat.listLibrat();
             runInAction(() => {
                 librat.forEach(libri => {
-                    this.libriRegistry.set(libri.id, libri);
+                    this.setLibri(libri);
                 })
             })
             this.setLoadingInitial(false);
@@ -36,31 +34,63 @@ export default class LibriStore {
 
         }
     }
+
+    loadLibri = async (id: string) => {
+        let libri = this.getLibri(id);
+        if(libri) {
+            this.selectedLibri = libri;
+            return libri;
+        } 
+        else {
+            this.loadingInitial = true;
+            try {
+                libri = await agentLibri.Librat.detailsLibrat(id);
+                this.setLibri(libri);
+                runInAction(() => {
+                    this.selectedLibri = libri;
+                })
+                this.setLoadingInitial(false);
+                return libri;
+            } catch (error) {
+                console.log(error);
+                this.setLoadingInitial(false);
+            }
+        }
+    }
+
+    private getLibri = (id: string) => {
+        return this.libriRegistry.get(id);
+    }
+
+    private setLibri = (libri: Libri) => {
+        this.libriRegistry.set(libri.id, libri);
+    }
+
+
     setLoadingInitial = (state: boolean) => {
         this.loadingInitial = state;
     }
 
-    selectLibri = (id: string) => {
-        this.selectedLibri = this.libriRegistry.get(id);
-    }
+    // selectLibri = (id: string) => {
+    //     this.selectedLibri = this.libriRegistry.get(id);
+    // }
 
-    cancelSelectedLibri = () => {
-        this.selectedLibri = undefined;
-    }
+    // cancelSelectedLibri = () => {
+    //     this.selectedLibri = undefined;
+    // }
 
-    openLibriForm = (id?: string) => {
-        id ? this.selectLibri(id) : this.cancelSelectedLibri();
-        this.editLibriMode = true;
-    }
+    // openLibriForm = (id?: string) => {
+    //     id ? this.selectLibri(id) : this.cancelSelectedLibri();
+    //     this.editLibriMode = true;
+    // }
 
-    closeLibriForm = () => {
-        this.editLibriMode = false;
-    }
+    // closeLibriForm = () => {
+    //     this.editLibriMode = false;
+    // }
 
 
     createLibri = async (libri: Libri) => {
         this.loading = true;
-        libri.id = uuid();
 
         try {
             await agentLibri.Librat.createLibrat(libri);
@@ -104,7 +134,7 @@ export default class LibriStore {
             await agentLibri.Librat.deleteLibrat(id);
             runInAction(() => {
                 this.libriRegistry.delete(id);
-                if (this.selectedLibri?.id === id) this.cancelSelectedLibri();
+                // if (this.selectedLibri?.id === id) this.cancelSelectedLibri();
                 this.loading = false;
             })
         } catch (error) {

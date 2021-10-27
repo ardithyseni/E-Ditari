@@ -1,50 +1,130 @@
-import { observer } from 'mobx-react-lite';
-import React, { ChangeEvent, useState } from 'react';
-import { Button, Form, Segment } from 'semantic-ui-react';
+import { observer } from "mobx-react-lite";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { Link, useHistory, useParams } from "react-router-dom";
+import { Button, Form, Segment } from "semantic-ui-react";
+import { useStore } from "./../../../app/stores/store";
+import LoadingComponent from "./../../../app/layout/LoadingComponent";
+import { v4 as uuid } from "uuid";
 
-import { useStore } from './../../../app/stores/store';
+export default observer(function ProfesoriForm() {
+  const history = useHistory();
 
-export default observer (function ProfesoriForm(){
+  const { profesoriStore } = useStore();
+  const {
+    loading,
+    loadingInitial,
+    createProfesori,
+    updateProfesori,
+    loadProfesori,
+  } = profesoriStore;
 
-        const {profesoriStore} = useStore();
-        const {selectedProfesori, closeProfesoriForm, loading, createProfesori, updateProfesori} = profesoriStore;
+  const { id } = useParams<{ id: string }>();
 
-    const initialState = selectedProfesori ?? {
-        profesoriID: '',
-        emri: '',
-        mbiemri: '',
-	    titulli: '',
-        datelindja: '',
-        adresa: '',
-        numriKontaktues: '',
-        email: ''
+  const [profesori, setProfesori] = useState({
+    profesoriID: "",
+    emri: "",
+    mbiemri: "",
+    titulli: "",
+    datelindja: "",
+    adresa: "",
+    numriKontaktues: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    if (id) loadProfesori(id).then((profesori) => setProfesori(profesori!));
+  }, [id, loadProfesori]);
+
+  function handleSubmitProfesori() {
+    if (profesori.profesoriID.length === 0) {
+      let newProfesori = {
+        ...profesori,
+        profesoriID: uuid(),
+      };
+      createProfesori(newProfesori).then(() =>
+        history.push(`/profesorat/${newProfesori.profesoriID}`)
+      );
+    } else {
+      updateProfesori(profesori).then(() =>
+        history.push(`/profesorat/${profesori.profesoriID}`)
+      );
     }
+  }
 
-    const [profesori, setProfesori] = useState(initialState);
+  function handleProfesoriInputChange(
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    const { name, value } = event.target;
+    setProfesori({ ...profesori, [name]: value });
+  }
 
-    function handleSubmitProfesori() {
-        profesori.profesoriID ? updateProfesori(profesori) : createProfesori(profesori);
-    }
+  if (loadingInitial)
+    return <LoadingComponent content="Loading Profesori..." />;
 
-    function handleProfesoriInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        const {name, value} = event.target;
-        setProfesori({...profesori, [name]: value})
-    }
+  return (
+    <Segment clearing>
+      {/* <Header as="h1">Shto Profesor</Header> */}
+      <Form onSubmit={handleSubmitProfesori} autoComplete="off">
+        <Form.Input
+          placeholder="Emri"
+          value={profesori.emri}
+          name="emri"
+          onChange={handleProfesoriInputChange}
+        />
+        <Form.Input
+          placeholder="Mbiemri"
+          value={profesori.mbiemri}
+          name="mbiemri"
+          onChange={handleProfesoriInputChange}
+        />
+        <Form.Input
+          placeholder="Titulli"
+          value={profesori.titulli}
+          name="titulli"
+          onChange={handleProfesoriInputChange}
+        />
+        <Form.Input
+          type="date"
+          placeholder="Ditelindja"
+          value={profesori.datelindja}
+          name="datelindja"
+          onChange={handleProfesoriInputChange}
+        />
+        <Form.Input
+          placeholder="Adresa"
+          value={profesori.adresa}
+          name="adresa"
+          onChange={handleProfesoriInputChange}
+        />
+        <Form.Input
+          placeholder="Numri Kontaktues"
+          value={profesori.numriKontaktues}
+          name="numriKontaktues"
+          onChange={handleProfesoriInputChange}
+        />
+        <Form.Input
+          placeholder="Email"
+          value={profesori.email}
+          name="email"
+          onChange={handleProfesoriInputChange}
+        />
 
-    return (
-        <Segment clearing >
-            <Form onSubmit={handleSubmitProfesori} autoComplete='off'>
-                <Form.Input placeholder = 'Emri' value={profesori.emri} name='emri' onChange={handleProfesoriInputChange}/>
-                <Form.Input placeholder = 'Mbiemri' value={profesori.mbiemri} name='mbiemri' onChange={handleProfesoriInputChange} />
-		        <Form.Input placeholder = 'Titulli' value={profesori.titulli} name='titulli' onChange={handleProfesoriInputChange} />
-                <Form.Input type ='date' placeholder = 'Ditelindja' value={profesori.datelindja} name='datelindja' onChange={handleProfesoriInputChange} />
-                <Form.Input placeholder = 'Adresa' value={profesori.adresa} name='adresa' onChange={handleProfesoriInputChange} />
-                <Form.Input placeholder = 'Numri Kontaktues' value={profesori.numriKontaktues} name='numriKontaktues' onChange={handleProfesoriInputChange} />
-                <Form.Input placeholder = 'Email' value={profesori.email} name='email' onChange={handleProfesoriInputChange} />
-
-                <Button loading = {loading} floated = 'right' positive type = 'submit' content ='Submit' />
-                <Button onClick = {closeProfesoriForm} floated = 'right' type = 'button' content = 'Cancel' />
-            </Form>
-        </Segment>
-    )
-})
+        <Button
+        as = {Link} to = '/profesorat'
+          loading={loading}
+          floated="right"
+          positive
+          type="submit"
+          content="Aktualizo"
+        />
+        <Button
+          as={Link}
+          to="/profesorat"
+          floated="right"
+          type="button"
+          content="Mbyll"
+        />
+      </Form>
+    </Segment>
+  );
+});
